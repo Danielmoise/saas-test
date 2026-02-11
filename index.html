@@ -14,19 +14,37 @@
           -moz-osx-font-smoothing: grayscale;
         }
     </style>
+    <script>
+        /**
+         * Polyfill per process.env.
+         * Necessario perché il browser non possiede l'oggetto 'process' nativo di Node.js.
+         * Senza questo, l'app si blocca con un "ReferenceError: process is not defined".
+         */
+        window.process = {
+            env: {
+                NODE_ENV: 'production',
+                API_KEY: '',
+                SUPABASE_URL: '',
+                SUPABASE_ANON_KEY: ''
+            }
+        };
+    </script>
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.4/client",
     "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.7"
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.7",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/"
   }
 }
 </script>
 </head>
 <body class="bg-gray-50 text-gray-900">
     <div id="root"></div>
+    <!-- Caricamento dell'entry point dell'applicazione come modulo ES6 -->
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>
