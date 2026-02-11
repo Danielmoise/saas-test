@@ -32,11 +32,11 @@ const Storefront: React.FC<StorefrontProps> = ({ pages, onNavigate }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {pages.map(page => (
             <div key={page.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
-              <div className="aspect-video relative overflow-hidden">
+              <div className="aspect-video relative overflow-hidden bg-gray-50 flex items-center justify-center p-4">
                 <img 
                   src={page.imageUrl || 'https://picsum.photos/seed/product/600/400'} 
                   alt={page.productName}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="p-6">
