@@ -6,7 +6,7 @@ import PublicLandingPage from './PublicLandingPage';
 interface LandingPageGeneratorProps {
   onSave: (page: LandingPage) => void;
   onUpdate: (page: LandingPage) => void;
-  onNavigate: (path: string) => void;
+  onNavigate: (path: string, params?: Record<string, string>) => void;
   initialData?: LandingPage;
 }
 
@@ -314,7 +314,7 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase">Slug URL (percorso pagina)</label>
                   <div className="flex items-center bg-gray-50 border-2 border-gray-100 rounded-xl px-3 group focus-within:border-blue-400 transition-all">
-                    <span className="text-gray-400 text-xs font-bold shrink-0">#/</span>
+                    <span className="text-gray-400 text-xs font-bold shrink-0">/</span>
                     <input 
                       type="text" 
                       className="flex-1 bg-transparent p-3 text-sm font-bold outline-none" 

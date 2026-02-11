@@ -55,7 +55,7 @@ export const generateLandingContent = async (
     
     REQUISITI MANDATORI:
     1. Genera ESATTAMENTE ${params.featureCount} elementi nell'array "features". Ogni elemento deve seguire lo schema "Titolo: Testo descrittivo".
-    2. IMPORTANTE: Integra argomentazioni basate su esperienze reali e feedback entusiasti dei clienti direttamente all'interno delle descrizioni dei benefici (features). Non creare una sezione titoli per i video.
+    2. IMPORTANTE: Integra argomentazioni basate su experiences reali e feedback entusiasti dei clienti direttamente all'interno delle descrizioni dei benefici (features). Non creare una sezione titoli per i video.
     3. Genera un array "sellingPoints" di 4-5 punti di forza brevissimi (massimo 5-6 parole ciascuno).
     4. Lo stile deve essere: ${densityInstructions[params.textDensity]}
     5. Usa SEMPRE il simbolo della valuta "${currencySymbol}" nei campi "price" e "oldPrice".
@@ -67,7 +67,8 @@ export const generateLandingContent = async (
 
   const response = await ai.models.generateContent({
     model: model,
-    contents: [{ parts: [{ text: prompt }] }],
+    // Using string prompt directly as it is the most robust method for single-turn text generation.
+    contents: prompt,
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -162,7 +163,8 @@ export const generateProductImagesFromReference = async (
 
   const response = await ai.models.generateContent({
     model: model,
-    contents: [{ parts }]
+    // Using object with parts array for complex multimodal input.
+    contents: { parts }
   });
 
   const images: string[] = [];
