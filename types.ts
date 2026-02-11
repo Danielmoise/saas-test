@@ -34,6 +34,13 @@ export interface VideoItem {
   muted?: boolean;
 }
 
+export interface TimelineConfig {
+  readyDaysMin: number;
+  readyDaysMax: number;
+  deliveryDaysMin: number;
+  deliveryDaysMax: number;
+}
+
 export interface LandingPageContent {
   title: string;
   description: string;
@@ -56,6 +63,7 @@ export interface LandingPageContent {
   socialProofName?: string;
   socialProofCount?: number;
   timelineSteps?: string[];
+  timelineConfig?: TimelineConfig;
   purchaseFormHtml?: string;
   stockCount?: number;
   popupCount?: number;

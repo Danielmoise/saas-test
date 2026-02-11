@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { LandingPage, Language, LandingPageContent, Announcement, Review, VideoItem } from '../types';
+import { LandingPage, Language, LandingPageContent, Announcement, Review, VideoItem, TimelineConfig } from '../types';
 import PublicLandingPage from './PublicLandingPage';
 
 interface LandingPageGeneratorProps {
@@ -69,6 +69,13 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
     { url: "https://cdn.shopify.com/videos/c/o/v/171162a47d1b44f1a042656ad7f85d02.mp4", borderColor: 'linear-gradient(0deg, #fe2d52, #28ffff)', autoPlay: true, loop: true, muted: true }
   ];
 
+  const DEFAULT_TIMELINE: TimelineConfig = {
+    readyDaysMin: 1,
+    readyDaysMax: 2,
+    deliveryDaysMin: 7,
+    deliveryDaysMax: 12
+  };
+
   const [content, setContent] = useState<LandingPageContent>({
     title: 'Nuova Landing Page',
     description: '',
@@ -87,10 +94,10 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
     popupCount: 9,
     popupInterval: 10,
     socialProofName: 'Michelle',
-    socialProofCount: 758
+    socialProofCount: 758,
+    timelineConfig: DEFAULT_TIMELINE
   });
 
-  // Effect to handle currency change when language is toggled in editor
   useEffect(() => {
     const symbolMap: Record<string, string> = {
       [Language.ITALIAN]: "€",
@@ -102,12 +109,8 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
     };
     const symbol = symbolMap[formData.language] || "€";
     
-    // Only auto-update if it's the default value or doesn't have a symbol
     setContent(prev => {
       const currentPrice = prev.price || "";
-      const currentOldPrice = prev.oldPrice || "";
-      
-      // Basic heuristic: if the price contains a known symbol, swap it
       const swapSymbol = (val: string) => {
         if (!val) return val;
         return val.replace(/[€£$]/g, symbol);
@@ -116,7 +119,7 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
       return {
         ...prev,
         price: swapSymbol(currentPrice) || `${symbol} 39,90`,
-        oldPrice: swapSymbol(currentOldPrice) || `${symbol} 79,80`
+        oldPrice: swapSymbol(prev.oldPrice || "") || `${symbol} 79,80`
       };
     });
   }, [formData.language]);
@@ -156,7 +159,8 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
         popupCount: aiContent.popupCount ?? 9,
         popupInterval: aiContent.popupInterval ?? 10,
         socialProofName: aiContent.socialProofName || 'Michelle',
-        socialProofCount: aiContent.socialProofCount || 758
+        socialProofCount: aiContent.socialProofCount || 758,
+        timelineConfig: aiContent.timelineConfig || DEFAULT_TIMELINE
       });
       delete (window as any).__PENDING_AI_DATA__;
     } else if (initialData) {
@@ -191,7 +195,8 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
         popupCount: savedContent.popupCount ?? 9,
         popupInterval: savedContent.popupInterval ?? 10,
         socialProofName: savedContent.socialProofName || 'Michelle',
-        socialProofCount: savedContent.socialProofCount || 758
+        socialProofCount: savedContent.socialProofCount || 758,
+        timelineConfig: savedContent.timelineConfig || DEFAULT_TIMELINE
       });
     }
   }, [initialData]);
@@ -240,6 +245,13 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
     const newItems = [...(content.videoItems || [])];
     newItems[index] = { ...newItems[index], [field]: value };
     setContent({ ...content, videoItems: newItems });
+  };
+
+  const updateTimeline = (field: keyof TimelineConfig, value: number) => {
+    setContent(prev => ({
+      ...prev,
+      timelineConfig: { ...(prev.timelineConfig || DEFAULT_TIMELINE), [field]: value }
+    }));
   };
 
   const addVideoItem = () => {
@@ -321,19 +333,35 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
                     <label className="text-[10px] font-black text-gray-400 uppercase">Scorte Iniziali (Magazzino)</label>
                     <input type="number" className="w-full bg-gray-50 border-2 border-gray-100 rounded-xl p-3 text-sm font-bold text-red-500" value={content.stockCount} onChange={e => setContent({...content, stockCount: parseInt(e.target.value) || 0})} />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase">Numero di Popups</label>
-                    <input type="number" className="w-full bg-gray-50 border-2 border-gray-100 rounded-xl p-3 text-sm font-bold" value={content.popupCount} onChange={e => setContent({...content, popupCount: parseInt(e.target.value) || 0})} />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase">Intervallo Popups (secondi)</label>
-                    <input type="number" className="w-full bg-gray-50 border-2 border-gray-100 rounded-xl p-3 text-sm font-bold" value={content.popupInterval} onChange={e => setContent({...content, popupInterval: parseInt(e.target.value) || 0})} />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase">Volume Totale Acquirenti</label>
-                    <input type="number" className="w-full bg-gray-50 border-2 border-gray-100 rounded-xl p-3 text-sm font-bold" value={content.socialProofCount} onChange={e => setContent({...content, socialProofCount: parseInt(e.target.value) || 0})} />
-                  </div>
                </div>
+            </AccordionSection>
+
+            <AccordionSection index={8} title="Timeline Spedizione" icon="🗓️" openSection={openSection} setOpenSection={setOpenSection}>
+              <div className="space-y-6">
+                <p className="text-[10px] text-gray-400 font-bold uppercase mb-2">Personalizza i giorni di attesa per ogni fase della spedizione.</p>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase">Pronto (Min Giorni)</label>
+                    <input type="number" min="0" className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm font-bold" value={content.timelineConfig?.readyDaysMin ?? 1} onChange={e => updateTimeline('readyDaysMin', parseInt(e.target.value) || 0)} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase">Pronto (Max Giorni)</label>
+                    <input type="number" min="0" className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm font-bold" value={content.timelineConfig?.readyDaysMax ?? 2} onChange={e => updateTimeline('readyDaysMax', parseInt(e.target.value) || 0)} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase">Consegna (Min Giorni)</label>
+                    <input type="number" min="0" className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm font-bold" value={content.timelineConfig?.deliveryDaysMin ?? 7} onChange={e => updateTimeline('deliveryDaysMin', parseInt(e.target.value) || 0)} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase">Consegna (Max Giorni)</label>
+                    <input type="number" min="0" className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm font-bold" value={content.timelineConfig?.deliveryDaysMax ?? 12} onChange={e => updateTimeline('deliveryDaysMax', parseInt(e.target.value) || 0)} />
+                  </div>
+                </div>
+              </div>
             </AccordionSection>
 
             <AccordionSection index={7} title="Video Testimonianze (TikTok)" icon="🎬" openSection={openSection} setOpenSection={setOpenSection}>

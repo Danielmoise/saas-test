@@ -5,7 +5,6 @@ import Storefront from './pages/Storefront';
 import AdminDashboard from './pages/AdminDashboard';
 import LandingPageGenerator from './pages/LandingPageGenerator';
 import PublicLandingPage from './pages/PublicLandingPage';
-import SaaSLanding from './pages/SaaSLanding';
 import Auth from './pages/Auth';
 import { supabase } from './services/supabaseClient';
 
@@ -141,19 +140,12 @@ const App: React.FC = () => {
   };
 
   if (loading && pages.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-[#0F172A] text-white">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="font-black uppercase tracking-widest text-xs opacity-50">Inizializzazione SaaSMod...</p>
-      </div>
-    );
+    return <div className="flex items-center justify-center h-screen bg-gray-50 font-bold">Caricamento sistema...</div>;
   }
 
   const renderContent = () => {
     switch (currentPage) {
       case 'home':
-        return <SaaSLanding onNavigate={navigate} session={session} />;
-      case 'store':
         return <Storefront pages={pages} onNavigate={navigate} />;
       case 'admin':
         return session ? (
@@ -182,10 +174,8 @@ const App: React.FC = () => {
             <button onClick={() => navigate('home')} className="text-blue-600 underline">Torna alla Home</button>
           </div>
         );
-      case 'auth':
-        return <Auth onNavigate={navigate} />;
       default:
-        return <SaaSLanding onNavigate={navigate} session={session} />;
+        return <Storefront pages={pages} onNavigate={navigate} />;
     }
   };
 

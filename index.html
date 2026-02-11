@@ -4,44 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaSMod - Modular Landing Page Generator</title>
+    <title>Modular SaaS Landing Gen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-    
-    <!-- Polyfill per process.env necessario per Gemini e Supabase nei browser -->
-    <script>
-      window.process = {
-        env: {
-          API_KEY: "", // Verrà iniettato dall'ambiente di esecuzione
-          SUPABASE_URL: "https://hjlyygxgatdvdopcegnj.supabase.co",
-          SUPABASE_ANON_KEY: "sb_publishable_4_RZ_XFss5iKgfjXk5Xuww_ua1g7eYi"
-        }
-      };
-    </script>
-
     <style>
         body { 
           font-family: 'Plus Jakarta Sans', sans-serif; 
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
-        }
-        /* Preloader semplice per lo stato di caricamento iniziale */
-        #root:empty::before {
-          content: "";
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          width: 40px;
-          height: 40px;
-          margin: -20px 0 0 -20px;
-          border: 3px solid #f3f3f3;
-          border-top: 3px solid #2563eb;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
         }
     </style>
 <script type="importmap">
@@ -58,7 +28,5 @@
 </head>
 <body class="bg-gray-50 text-gray-900">
     <div id="root"></div>
-    <!-- Caricamento esplicito del file di ingresso dell'applicazione -->
-    <script type="module" src="./index.tsx"></script>
 </body>
 </html>
