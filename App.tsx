@@ -144,6 +144,14 @@ const App: React.FC = () => {
   }
 
   const renderContent = () => {
+    // Gestione Routing dinamico basato su SLUG
+    const systemRoutes = ['home', 'admin', 'generate', 'edit', 'auth', 'view'];
+    const pageBySlug = pages.find(p => p.slug === currentPage);
+
+    if (pageBySlug && !systemRoutes.includes(currentPage)) {
+      return <PublicLandingPage page={pageBySlug} onNavigate={navigate} />;
+    }
+
     switch (currentPage) {
       case 'home':
         return <Storefront pages={pages} onNavigate={navigate} />;
@@ -167,8 +175,12 @@ const App: React.FC = () => {
           <Auth onNavigate={navigate} />
         );
       case 'view':
-        const page = pages.find(p => p.id === currentParams.id);
-        return page ? <PublicLandingPage page={page} onNavigate={navigate} /> : (
+        // Manteniamo 'view' per compatibilità ID, ma reindirizziamo se possibile
+        const pageById = pages.find(p => p.id === currentParams.id);
+        if (pageById) {
+          return <PublicLandingPage page={pageById} onNavigate={navigate} />;
+        }
+        return (
           <div className="p-20 text-center">
             <h2 className="text-2xl font-bold mb-4">Pagina non trovata</h2>
             <button onClick={() => navigate('home')} className="text-blue-600 underline">Torna alla Home</button>

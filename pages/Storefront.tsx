@@ -52,7 +52,7 @@ const Storefront: React.FC<StorefrontProps> = ({ pages, onNavigate }) => {
                   ))}
                 </div>
                 <button 
-                  onClick={() => onNavigate(`view?id=${page.id}`)}
+                  onClick={() => onNavigate(page.slug)}
                   className="w-full bg-gray-900 text-white py-3 rounded-lg font-bold hover:bg-black transition-colors"
                 >
                   Visualizza Landing Page

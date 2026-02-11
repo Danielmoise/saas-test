@@ -271,7 +271,6 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
   };
 
   const handleSlugChange = (val: string) => {
-    // Trasforma in slug URL valido: minuscolo, toglie accenti, rimpiazza spazi con trattini
     const cleanSlug = val
       .toLowerCase()
       .normalize("NFD")
@@ -315,7 +314,7 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase">Slug URL (percorso pagina)</label>
                   <div className="flex items-center bg-gray-50 border-2 border-gray-100 rounded-xl px-3 group focus-within:border-blue-400 transition-all">
-                    <span className="text-gray-400 text-xs font-bold shrink-0">/view?id=</span>
+                    <span className="text-gray-400 text-xs font-bold shrink-0">#/</span>
                     <input 
                       type="text" 
                       className="flex-1 bg-transparent p-3 text-sm font-bold outline-none" 
@@ -324,7 +323,7 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
                       placeholder="es: nome-prodotto-2024"
                     />
                   </div>
-                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Questo sarà l'identificativo unico della pagina.</p>
+                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Anteprima link: <span className="text-blue-500">/{formData.slug || '...'}</span></p>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase">Link di Acquisto Esterno (Shopify/Stripe)</label>

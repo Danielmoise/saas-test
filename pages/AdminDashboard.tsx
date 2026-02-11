@@ -346,7 +346,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ pages, onDelete, onNavi
                      <div className="aspect-video relative overflow-hidden bg-gray-100">
                        <img src={page.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
-                          <button onClick={() => onNavigate(`view?id=${page.id}`)} className="w-32 py-2.5 bg-white rounded-xl text-gray-900 font-black text-[10px] uppercase shadow-xl hover:scale-110 transition-all">Anteprima</button>
+                          <button onClick={() => onNavigate(page.slug)} className="w-32 py-2.5 bg-white rounded-xl text-gray-900 font-black text-[10px] uppercase shadow-xl hover:scale-110 transition-all">Anteprima</button>
                           <button onClick={() => onNavigate(`edit?id=${page.id}`)} className="w-32 py-2.5 bg-blue-600 rounded-xl text-white font-black text-[10px] uppercase shadow-xl hover:scale-110 transition-all">Modifica</button>
                           <button onClick={() => setDeleteConfirmation({ id: page.id, name: page.productName })} className="w-32 py-2.5 bg-red-500 rounded-xl text-white font-black text-[10px] uppercase shadow-xl hover:scale-110 transition-all">Elimina</button>
                        </div>
