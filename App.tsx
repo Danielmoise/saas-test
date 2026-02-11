@@ -37,20 +37,33 @@ const App: React.FC = () => {
     if (error) {
       console.error('Error fetching pages:', error);
     } else if (data) {
-      const mappedData: LandingPage[] = data.map((item: any) => ({
-        id: item.id,
-        slug: item.slug,
-        productName: item.product_name,
-        imageUrl: item.image_url,
-        additionalImages: item.additional_images || [],
-        buyLink: item.buy_link,
-        baseLanguage: item.base_language,
-        niche: item.niche,
-        targetAudience: item.target_audience,
-        tone: item.tone,
-        translations: item.translations,
-        createdAt: item.created_at
-      }));
+      const mappedData: LandingPage[] = data.map((item: any) => {
+        // Safe parsing delle traduzioni per prevenire crash se il DB restituisce stringhe
+        let translations = item.translations;
+        if (typeof translations === 'string') {
+          try {
+            translations = JSON.parse(translations);
+          } catch (e) {
+            console.error("Errore parsing traduzioni per", item.id, e);
+            translations = {};
+          }
+        }
+
+        return {
+          id: item.id,
+          slug: item.slug,
+          productName: item.product_name,
+          imageUrl: item.image_url,
+          additionalImages: item.additional_images || [],
+          buyLink: item.buy_link,
+          baseLanguage: item.base_language,
+          niche: item.niche,
+          targetAudience: item.target_audience,
+          tone: item.tone,
+          translations: translations || {},
+          createdAt: item.created_at
+        };
+      });
       setPages(mappedData);
     }
     setLoading(false);
@@ -144,7 +157,6 @@ const App: React.FC = () => {
   }
 
   const renderContent = () => {
-    // Gestione Routing dinamico basato su SLUG
     const systemRoutes = ['home', 'admin', 'generate', 'edit', 'auth', 'view'];
     const pageBySlug = pages.find(p => p.slug === currentPage);
 
@@ -175,7 +187,6 @@ const App: React.FC = () => {
           <Auth onNavigate={navigate} />
         );
       case 'view':
-        // Manteniamo 'view' per compatibilità ID, ma reindirizziamo se possibile
         const pageById = pages.find(p => p.id === currentParams.id);
         if (pageById) {
           return <PublicLandingPage page={pageById} onNavigate={navigate} />;

@@ -254,16 +254,20 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
   const sliderRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    const availableLangs = Object.keys(page.translations) as Language[];
-    if (!page.translations[currentLang] && availableLangs.length > 0) {
+    const availableLangs = page.translations ? Object.keys(page.translations) as Language[] : [];
+    if (page.translations && !page.translations[currentLang] && availableLangs.length > 0) {
       setCurrentLang(availableLangs[0]);
-    } else if (page.baseLanguage !== currentLang && page.translations[page.baseLanguage]) {
+    } else if (page.baseLanguage !== currentLang && page.translations && page.translations[page.baseLanguage]) {
       setCurrentLang(page.baseLanguage);
     }
     setMainImage(page.imageUrl);
   }, [page.translations, page.baseLanguage, page.imageUrl]);
 
-  const content = page.translations[currentLang] || Object.values(page.translations)[0];
+  // Safe Extraction del contenuto
+  const content = useMemo(() => {
+    if (!page.translations) return null;
+    return page.translations[currentLang] || Object.values(page.translations)[0] || null;
+  }, [page.translations, currentLang]);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleReviews, setVisibleReviews] = useState(50);
@@ -281,7 +285,7 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
   }, [currentLang]);
   
   const thumbnails = [page.imageUrl, ...(page.additionalImages || [])];
-  const reviewsToDisplay = content?.reviews.slice(0, visibleReviews) || [];
+  const reviewsToDisplay = content?.reviews?.slice(0, visibleReviews) || [];
 
   const videoItems = useMemo(() => {
     if (content?.videoItems && content.videoItems.length > 0) return content.videoItems;
@@ -328,8 +332,9 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
   };
 
   if (!content) return (
-    <div className="flex items-center justify-center h-full p-20 text-gray-400 font-bold uppercase tracking-widest bg-white">
-      Caricamento Anteprima...
+    <div className="flex flex-col items-center justify-center h-full p-20 text-gray-400 font-bold uppercase tracking-widest bg-white gap-4">
+      <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+      Caricamento Pagina...
     </div>
   );
 
@@ -346,7 +351,6 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
         }
         .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
 
-        /* Custom Payment Icons Styling */
         .ss-payment-text {
             width: 100%;
             text-align: center;
@@ -354,7 +358,7 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
             margin-bottom: 3px;
             font-size: 14px;
             font-weight: bold;
-            color: #9ca3af; /* text-gray-400 */
+            color: #9ca3af;
         }
       
         .ss-payment-list {
@@ -391,12 +395,10 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
           }
         }
         
-        /* Contenitore per il modulo HTML personalizzato nel modale */
         .custom-form-container { width: 100%; }
         .custom-form-container iframe { width: 100%; min-height: 400px; border: none; }
       `}</style>
 
-      {/* Pulsante Home Discreto */}
       <button 
         onClick={() => onNavigate('home')}
         className="fixed top-4 left-4 z-[1500] p-3 bg-white/70 hover:bg-white border border-gray-200 rounded-full shadow-lg transition-all text-gray-500 hover:text-gray-900 group"
@@ -426,14 +428,14 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
         <div 
           className="sticky top-0 z-[1200] w-full py-2.5 transition-colors duration-500 overflow-hidden"
           style={{ 
-            backgroundColor: content.announcements[currentAnnouncementIndex].backgroundColor,
-            color: content.announcements[currentAnnouncementIndex].textColor 
+            backgroundColor: content.announcements[currentAnnouncementIndex]?.backgroundColor || '#000',
+            color: content.announcements[currentAnnouncementIndex]?.textColor || '#fff'
           }}
         >
           <div className="max-w-7xl mx-auto px-4 flex justify-center items-center gap-2">
-            <span className="text-sm md:text-base">{content.announcements[currentAnnouncementIndex].icon}</span>
+            <span className="text-sm md:text-base">{content.announcements[currentAnnouncementIndex]?.icon}</span>
             <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-center">
-              {content.announcements[currentAnnouncementIndex].text}
+              {content.announcements[currentAnnouncementIndex]?.text}
             </span>
           </div>
         </div>
@@ -485,14 +487,14 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
               <div className="flex items-center gap-3">
                 <div className="flex text-yellow-400 text-sm">★★★★★</div>
                 <span className="text-xs font-semibold text-gray-500 border-b border-gray-100 pb-0.5">
-                  4.9/5 - {content.reviews.length} Recensioni Verificate
+                  4.9/5 - {content.reviews?.length || 0} Recensioni Verificate
                 </span>
               </div>
               <div className="happy-customersV2 flex items-center bg-white rounded-lg px-4 py-1.5 text-[#000] shadow-[0px_4px_6px_rgba(0,0,0,0.1)] font-['Roboto',sans-serif] w-fit">
                 <div className="avatarsV2 flex mr-2.5">
-                  <img src="https://img.freepik.com/free-photo/stylish-african-american-woman-smiling_23-2148770405.jpg" alt="Customer 1" className="avatarV2 w-[22px] h-[22px] rounded-full border-2 border-white -ml-0 object-cover" />
-                  <img src="https://thumbs.dreamstime.com/b/beautiful-african-american-woman-relaxing-outside-happy-middle-aged-smiling-46298787.jpg" alt="Customer 2" className="avatarV2 w-[22px] h-[22px] rounded-full border-2 border-white -ml-[7px] object-cover" />
-                  <img src="https://media.istockphoto.com/id/1320651997/photo/young-woman-close-up-isolated-studio-portrait.jpg?s=612x612&w=0&k=20&c=lV6pxz-DknISGT2jjiSvUmSaw0hpMDf-dBpT8HTSAUI=" alt="Customer 3" className="avatarV2 w-[22px] h-[22px] rounded-full border-2 border-white -ml-[7px] object-cover" />
+                  <img src="https://img.freepik.com/free-photo/stylish-african-american-woman-smiling_23-2148770405.jpg" alt="" className="avatarV2 w-[22px] h-[22px] rounded-full border-2 border-white -ml-0 object-cover" />
+                  <img src="https://thumbs.dreamstime.com/b/beautiful-african-american-woman-relaxing-outside-happy-middle-aged-smiling-46298787.jpg" alt="" className="avatarV2 w-[22px] h-[22px] rounded-full border-2 border-white -ml-[7px] object-cover" />
+                  <img src="https://media.istockphoto.com/id/1320651997/photo/young-woman-close-up-isolated-studio-portrait.jpg?s=612x612&w=0&k=20&c=lV6pxz-DknISGT2jjiSvUmSaw0hpMDf-dBpT8HTSAUI=" alt="" className="avatarV2 w-[22px] h-[22px] rounded-full border-2 border-white -ml-[7px] object-cover" />
                 </div>
                 <div className="textV2 text-[12px] flex items-center gap-[3px] leading-none">
                   <span className="font-[900]">{content.socialProofName || 'Michelle'}</span>
@@ -539,14 +541,12 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
                     onClick={() => setIsModalOpen(true)}
                     className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-lg md:text-xl shadow-xl shadow-blue-100 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 group"
                   >
-                    {content.ctaText.toUpperCase()}
+                    {content.ctaText?.toUpperCase() || 'ACQUISTA'}
                     <svg className="w-6 h-6 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                   </button>
                   
                   <ul aria-label='' className='ss-payment-list'>
-                    <p className='ss-payment-text'>
-                      {localization.safePaymentText}
-                    </p>
+                    <p className='ss-payment-text'>{localization.safePaymentText}</p>
                     <div className="flex flex-wrap justify-center gap-1 opacity-80 grayscale hover:grayscale-0 transition-all">
                       <li className="ss-payment-item"><div className="ss-payment-icon"><svg width="40" height="26" viewBox="0 0 226 167"><rect fill="white" height="124.354" rx="14.5521" stroke="#D9D9D9" strokeWidth="2.64583" width="182.562" x="21.3229" y="21.3229"/><path d="M90.2 83.9c0-1.5-.1-3-.3-4.6H68.8v8.7h12c-.5 2.8-2.1 5.3-4.5 6.9v5.7h7.2c4.2-3.9 6.7-9.7 6.7-16.7z" fill="#4285F4"/><path d="M68.8 106.1c6 0 11.1-2 14.8-5.5l-7.2-5.7c-2 1.4-4.6 2.2-7.6 2.2-5.8 0-10.7-4-12.5-9.3H48.9v5.8c3.8 7.7 11.5 12.5 19.9 12.5z" fill="#34A853"/><path d="M56.3 87.8c-.9-2.8-.9-5.8 0-8.7V73.3h-7.4C45.7 79.7 45.7 87.2 48.9 93.6l7.4-5.8z" fill="#FBBC04"/><path d="M68.8 69.7c3.2-.1 6.3 1.2 8.6 3.4l6.4-6.5C79.7 62.8 74.4 60.7 68.8 60.8c-8.4 0-16.1 4.8-19.9 12.4l7.4 5.9c1.8-5.4 6.7-9.4 12.5-9.4z" fill="#EA4335"/></svg></div></li>
                       <li className="ss-payment-item"><div className="ss-payment-icon"><svg width="40" height="26" viewBox="0 0 226 167"><rect fill="white" height="124.354" rx="14.5521" stroke="#D9D9D9" strokeWidth="2.64583" width="182.562" x="21.3229" y="21.3229"/><path d="M113.9 110.8c-6.3 5.4-14.5 8.7-23.4 8.7-19.9 0-36.1-16.4-36.1-36.5 0-20.2 16.2-36.5 36.1-36.5 8.9 0 17.1 3.3 23.4 8.7 6.3-5.4 14.5-8.7 23.4-8.7 19.9 0 36.1-16.4 36.1 36.5s-16.2 36.5-36.1 36.5c-8.9.1-17.1-3.2-23.4-8.7z" fill="#ED0006"/><path d="M113.9 110.8c7.8-6.7 12.7-16.7 12.7-27.8s-4.9-21.1-12.7-27.8c6.3-5.4 14.5-8.7 23.4-8.7 19.9 0 36.1-16.4 36.1 36.5s-16.2 36.5-36.1 36.5c-8.9 0-17.1-3.3-23.4-8.7z" fill="#F9A000"/><path d="M113.9 110.8c7.8-6.7 12.7-16.7 12.7-27.8s-4.9-21.1-12.7-27.8c-7.8 6.7-12.7 16.7-12.7 27.8 0 11.1 4.9 21.1 12.7 27.8z" fill="#FF5E00"/></svg></div></li>
@@ -579,8 +579,10 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
         )}
 
         <div className="mt-32 space-y-24">
-          {content.features.map((feature, i) => {
-            const [title, desc] = feature.split(':');
+          {content.features?.map((feature, i) => {
+            const parts = feature?.split(':') || [feature, ''];
+            const title = parts[0];
+            const desc = parts[1];
             return (
               <section key={i} className={`flex flex-col lg:flex-row items-center gap-12 md:gap-20 ${i % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}>
                 <div className="w-full lg:w-1/2">
@@ -606,7 +608,7 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
         <section className="mt-40 bg-gray-50 md:rounded-[3rem] p-8 md:p-16 border-t border-b md:border border-gray-100">
            <div className="text-center mb-16">
              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight">Recensioni dei Clienti</h2>
-             <p className="text-gray-500 font-bold uppercase tracking-[0.2em] mt-3 text-xs">Basate su {content.reviews.length} acquisti verificati</p>
+             <p className="text-gray-500 font-bold uppercase tracking-[0.2em] mt-3 text-xs">Basate su {content.reviews?.length || 0} acquisti verificati</p>
            </div>
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
              {reviewsToDisplay.map((review, idx) => (
@@ -625,7 +627,7 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
                    <div className="mb-6 py-3 px-4 bg-gray-50 rounded-xl text-[10px] font-bold uppercase text-gray-400 tracking-widest">Ottimo prodotto, consigliato!</div>
                  )}
                  <div className="flex items-center gap-3 pt-5 border-t border-gray-50">
-                   <div className="w-10 h-10 bg-gray-900 text-white rounded-xl flex items-center justify-center font-black text-sm">{review.author?.[0]}</div>
+                   <div className="w-10 h-10 bg-gray-900 text-white rounded-xl flex items-center justify-center font-black text-sm">{review.author?.[0] || 'U'}</div>
                    <div className="flex flex-col">
                       <p className="font-bold text-gray-900 text-sm">{review.author}</p>
                       <span className="text-[9px] text-emerald-500 font-bold uppercase">{localization.verifiedText}</span>
@@ -634,7 +636,7 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
                </div>
              ))}
            </div>
-           {visibleReviews < content.reviews.length && (
+           {visibleReviews < (content.reviews?.length || 0) && (
              <div className="mt-12 text-center">
                 <button onClick={() => setVisibleReviews(v => v + 100)} className="bg-white border border-gray-200 text-gray-900 px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:border-gray-900 transition-all">
                   {localization.loadMoreText}
