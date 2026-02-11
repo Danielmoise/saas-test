@@ -57,32 +57,22 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    const handleLocationChange = () => {
-      // Ottiene il percorso rimuovendo la slash iniziale
-      const path = window.location.pathname.replace(/^\/+/, '') || 'home';
-      const params = new URLSearchParams(window.location.search);
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const [path, queryString] = hash.split('?');
+      const params = new URLSearchParams(queryString);
       
-      setCurrentPage(path);
+      setCurrentPage(path || 'home');
       setCurrentParams(Object.fromEntries(params.entries()));
     };
 
-    // Ascolta i cambiamenti di navigazione (avanti/indietro nel browser)
-    window.addEventListener('popstate', handleLocationChange);
-    handleLocationChange();
-    
-    return () => window.removeEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const navigate = (path: string, params?: Record<string, string>) => {
-    let url = path === 'home' ? '/' : `/${path}`;
-    if (params) {
-      const searchParams = new URLSearchParams(params);
-      url += `?${searchParams.toString()}`;
-    }
-    
-    window.history.pushState({}, '', url);
-    // Dispatch manuale dell'evento popstate perché pushState non lo triggera automaticamente
-    window.dispatchEvent(new PopStateEvent('popstate'));
+  const navigate = (path: string) => {
+    window.location.hash = path;
   };
 
   const addPage = async (newPage: LandingPage) => {
@@ -119,7 +109,6 @@ const App: React.FC = () => {
         slug: updatedPage.slug,
         image_url: updatedPage.imageUrl,
         additional_images: updatedPage.additionalImages,
-        // Fixed: buyLink property was incorrectly accessed as buy_link
         buy_link: updatedPage.buyLink,
         base_language: updatedPage.baseLanguage,
         niche: updatedPage.niche,
@@ -155,10 +144,10 @@ const App: React.FC = () => {
   }
 
   const renderContent = () => {
+    // Gestione Routing dinamico basato su SLUG
     const systemRoutes = ['home', 'admin', 'generate', 'edit', 'auth', 'view'];
     const pageBySlug = pages.find(p => p.slug === currentPage);
 
-    // Se esiste una pagina con questo slug, la mostriamo
     if (pageBySlug && !systemRoutes.includes(currentPage)) {
       return <PublicLandingPage page={pageBySlug} onNavigate={navigate} />;
     }
@@ -186,6 +175,7 @@ const App: React.FC = () => {
           <Auth onNavigate={navigate} />
         );
       case 'view':
+        // Manteniamo 'view' per compatibilità ID, ma reindirizziamo se possibile
         const pageById = pages.find(p => p.id === currentParams.id);
         if (pageById) {
           return <PublicLandingPage page={pageById} onNavigate={navigate} />;
@@ -197,7 +187,6 @@ const App: React.FC = () => {
           </div>
         );
       default:
-        // Se non è una rotta di sistema e non è uno slug valido, torna in home
         return <Storefront pages={pages} onNavigate={navigate} />;
     }
   };
