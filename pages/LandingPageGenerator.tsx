@@ -52,6 +52,7 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
   
   const [formData, setFormData] = useState({
     name: '',
+    slug: '',
     imageUrl: '',
     buyLink: '',
     language: Language.ITALIAN,
@@ -130,6 +131,7 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
     if (pendingData) {
       setFormData({
         name: pendingData.productName,
+        slug: pendingData.slug,
         imageUrl: pendingData.imageUrl,
         buyLink: pendingData.buyLink || '',
         language: pendingData.baseLanguage,
@@ -166,6 +168,7 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
     } else if (initialData) {
       setFormData({
         name: initialData.productName,
+        slug: initialData.slug,
         imageUrl: initialData.imageUrl,
         buyLink: initialData.buyLink || '',
         language: initialData.baseLanguage,
@@ -202,11 +205,15 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
   }, [initialData]);
 
   const handleSave = async () => {
+    if (!formData.slug.trim()) {
+      alert("Lo slug URL è obbligatorio.");
+      return;
+    }
     setLoading(true);
     try {
       const pageData: LandingPage = {
         id: initialData?.id || crypto.randomUUID(),
-        slug: formData.name.toLowerCase().replace(/\s+/g, '-'),
+        slug: formData.slug.trim(),
         productName: formData.name,
         imageUrl: formData.imageUrl,
         additionalImages: formData.additionalImages,
@@ -263,6 +270,18 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
     setContent({ ...content, videoItems: content.videoItems?.filter((_, i) => i !== index) });
   };
 
+  const handleSlugChange = (val: string) => {
+    // Trasforma in slug URL valido: minuscolo, toglie accenti, rimpiazza spazi con trattini
+    const cleanSlug = val
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+    setFormData({ ...formData, slug: cleanSlug });
+  };
+
   return (
     <div className="h-screen flex flex-col bg-[#F4F7FA] overflow-hidden font-['Plus_Jakarta_Sans']">
       <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 shrink-0 shadow-sm sticky top-0 z-[100]">
@@ -291,6 +310,35 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
         <aside className="w-[520px] bg-white border-r border-gray-200 overflow-y-auto custom-scrollbar shadow-2xl relative z-10">
           <div className="flex flex-col p-6 space-y-6">
             
+            <AccordionSection index={9} title="Link & URL Personalizzata" icon="🔗" openSection={openSection} setOpenSection={setOpenSection}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase">Slug URL (percorso pagina)</label>
+                  <div className="flex items-center bg-gray-50 border-2 border-gray-100 rounded-xl px-3 group focus-within:border-blue-400 transition-all">
+                    <span className="text-gray-400 text-xs font-bold shrink-0">/view?id=</span>
+                    <input 
+                      type="text" 
+                      className="flex-1 bg-transparent p-3 text-sm font-bold outline-none" 
+                      value={formData.slug} 
+                      onChange={e => handleSlugChange(e.target.value)}
+                      placeholder="es: nome-prodotto-2024"
+                    />
+                  </div>
+                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Questo sarà l'identificativo unico della pagina.</p>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase">Link di Acquisto Esterno (Shopify/Stripe)</label>
+                  <input 
+                    type="text" 
+                    className="w-full bg-gray-50 border-2 border-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:border-blue-400 transition-all" 
+                    value={formData.buyLink} 
+                    onChange={e => setFormData({...formData, buyLink: e.target.value})}
+                    placeholder="https://buy.stripe.com/..."
+                  />
+                </div>
+              </div>
+            </AccordionSection>
+
             <AccordionSection index={1} title="Annunci (Barra in cima)" icon="📢" openSection={openSection} setOpenSection={setOpenSection}>
               <div className="space-y-4">
                 {content.announcements?.map((ann, idx) => (
@@ -521,7 +569,7 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
                 <PublicLandingPage 
                   page={{
                     id: 'preview',
-                    slug: 'preview',
+                    slug: formData.slug || 'preview',
                     productName: formData.name,
                     imageUrl: formData.imageUrl,
                     additionalImages: formData.additionalImages,
