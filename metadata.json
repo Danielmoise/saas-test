@@ -1,0 +1,8 @@
+{
+  "name": "Modular Landing Page SaaS",
+  "description": "A sophisticated modular SaaS platform for generating multi-language product landing pages with AI-generated reviews and content translations.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
