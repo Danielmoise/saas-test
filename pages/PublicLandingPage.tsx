@@ -81,7 +81,7 @@ const LOCALIZED_DATA: Record<string, {
     secureText: "Pagos Seguros y Encriptados",
     returnText: "Devoluzioni Gratuitas",
     loadMoreText: "Cargar más reseñas",
-    socialProofPurchased: "y {count} personas più compraron",
+    socialProofPurchased: "y {count} persone più compraron",
     timeline: { ordered: "Pedido", ready: "Enviado", delivered: "Entregado" },
     safePaymentText: "Pago sicuro en nuestro sito"
   }
@@ -390,6 +390,10 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
             max-height: calc(60px * 0.66);
           }
         }
+        
+        /* Contenitore per il modulo HTML personalizzato nel modale */
+        .custom-form-container { width: 100%; }
+        .custom-form-container iframe { width: 100%; min-height: 400px; border: none; }
       `}</style>
 
       {/* Pulsante Home Discreto */}
@@ -439,7 +443,6 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-start">
           <div className="space-y-4 md:sticky md:top-24">
             
-            {/* HERO IMAGE CONTAINER - SWIPABLE ON MOBILE */}
             <div className="relative w-full bg-white border-b md:border md:border-gray-100 md:rounded-3xl shadow-sm flex overflow-hidden">
               <div 
                 ref={sliderRef}
@@ -451,13 +454,11 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
                     <img src={img} alt={`${page.productName} ${i}`} className="w-full h-auto block object-contain" />
                   </div>
                 ))}
-                {/* Desktop static main image display */}
                 <div className="hidden md:block w-full">
                    <img src={mainImage} alt={page.productName} className="w-full h-auto block object-contain" />
                 </div>
               </div>
 
-              {/* PAGINATION DOTS (MOBILE ONLY) */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 md:hidden">
                 {thumbnails.map((_, i) => (
                   <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${activeImageIndex === i ? 'bg-gray-900 w-4' : 'bg-gray-300'}`}></div>
@@ -465,7 +466,6 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
               </div>
             </div>
 
-            {/* THUMBNAILS (DESKTOP) */}
             <div className="grid grid-cols-5 gap-2 md:gap-3 px-4 md:px-0 pb-4 md:pb-0">
               {thumbnails.map((img, i) => (
                 <button 
@@ -543,16 +543,13 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
                     <svg className="w-6 h-6 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                   </button>
                   
-                  {/* CUSTOM PAYMENT ICONS SECTION */}
                   <ul aria-label='' className='ss-payment-list'>
                     <p className='ss-payment-text'>
                       {localization.safePaymentText}
                     </p>
-                    {/* Simplified payment icons row */}
                     <div className="flex flex-wrap justify-center gap-1 opacity-80 grayscale hover:grayscale-0 transition-all">
-                      {/* Icons simplified to SVG parts for brevity, same as previous version but grouped */}
                       <li className="ss-payment-item"><div className="ss-payment-icon"><svg width="40" height="26" viewBox="0 0 226 167"><rect fill="white" height="124.354" rx="14.5521" stroke="#D9D9D9" strokeWidth="2.64583" width="182.562" x="21.3229" y="21.3229"/><path d="M90.2 83.9c0-1.5-.1-3-.3-4.6H68.8v8.7h12c-.5 2.8-2.1 5.3-4.5 6.9v5.7h7.2c4.2-3.9 6.7-9.7 6.7-16.7z" fill="#4285F4"/><path d="M68.8 106.1c6 0 11.1-2 14.8-5.5l-7.2-5.7c-2 1.4-4.6 2.2-7.6 2.2-5.8 0-10.7-4-12.5-9.3H48.9v5.8c3.8 7.7 11.5 12.5 19.9 12.5z" fill="#34A853"/><path d="M56.3 87.8c-.9-2.8-.9-5.8 0-8.7V73.3h-7.4C45.7 79.7 45.7 87.2 48.9 93.6l7.4-5.8z" fill="#FBBC04"/><path d="M68.8 69.7c3.2-.1 6.3 1.2 8.6 3.4l6.4-6.5C79.7 62.8 74.4 60.7 68.8 60.8c-8.4 0-16.1 4.8-19.9 12.4l7.4 5.9c1.8-5.4 6.7-9.4 12.5-9.4z" fill="#EA4335"/></svg></div></li>
-                      <li className="ss-payment-item"><div className="ss-payment-icon"><svg width="40" height="26" viewBox="0 0 226 167"><rect fill="white" height="124.354" rx="14.5521" stroke="#D9D9D9" strokeWidth="2.64583" width="182.562" x="21.3229" y="21.3229"/><path d="M113.9 110.8c-6.3 5.4-14.5 8.7-23.4 8.7-19.9 0-36.1-16.4-36.1-36.5 0-20.2 16.2-36.5 36.1-36.5 8.9 0 17.1 3.3 23.4 8.7 6.3-5.4 14.5-8.7 23.4-8.7 19.9 0 36.1 16.4 36.1 36.5s-16.2 36.5-36.1 36.5c-8.9.1-17.1-3.2-23.4-8.7z" fill="#ED0006"/><path d="M113.9 110.8c7.8-6.7 12.7-16.7 12.7-27.8s-4.9-21.1-12.7-27.8c6.3-5.4 14.5-8.7 23.4-8.7 19.9 0 36.1 16.4 36.1 36.5s-16.2 36.5-36.1 36.5c-8.9 0-17.1-3.3-23.4-8.7z" fill="#F9A000"/><path d="M113.9 110.8c7.8-6.7 12.7-16.7 12.7-27.8s-4.9-21.1-12.7-27.8c-7.8 6.7-12.7 16.7-12.7 27.8 0 11.1 4.9 21.1 12.7 27.8z" fill="#FF5E00"/></svg></div></li>
+                      <li className="ss-payment-item"><div className="ss-payment-icon"><svg width="40" height="26" viewBox="0 0 226 167"><rect fill="white" height="124.354" rx="14.5521" stroke="#D9D9D9" strokeWidth="2.64583" width="182.562" x="21.3229" y="21.3229"/><path d="M113.9 110.8c-6.3 5.4-14.5 8.7-23.4 8.7-19.9 0-36.1-16.4-36.1-36.5 0-20.2 16.2-36.5 36.1-36.5 8.9 0 17.1 3.3 23.4 8.7 6.3-5.4 14.5-8.7 23.4-8.7 19.9 0 36.1-16.4 36.1 36.5s-16.2 36.5-36.1 36.5c-8.9.1-17.1-3.2-23.4-8.7z" fill="#ED0006"/><path d="M113.9 110.8c7.8-6.7 12.7-16.7 12.7-27.8s-4.9-21.1-12.7-27.8c6.3-5.4 14.5-8.7 23.4-8.7 19.9 0 36.1-16.4 36.1 36.5s-16.2 36.5-36.1 36.5c-8.9 0-17.1-3.3-23.4-8.7z" fill="#F9A000"/><path d="M113.9 110.8c7.8-6.7 12.7-16.7 12.7-27.8s-4.9-21.1-12.7-27.8c-7.8 6.7-12.7 16.7-12.7 27.8 0 11.1 4.9 21.1 12.7 27.8z" fill="#FF5E00"/></svg></div></li>
                       <li className="ss-payment-item"><div className="ss-payment-icon"><svg width="40" height="26" viewBox="0 0 226 167"><rect fill="white" height="124.354" rx="14.5521" stroke="#D9D9D9" strokeWidth="2.64583" width="182.562" x="21.3229" y="21.3229"/><path d="M76.2 106h-11.2l-8.4-32.1c-.4-1.5-1.3-2.8-2.5-3.4-3.1-1.6-6.5-2.8-10.3-3.4v-1.2H61.9c2.5 0 4.4 1.9 4.7 4l4.4 23.2L82.1 65.9h10.9L76.2 106zm23.1 0h-10.6L97.4 65.9h10.6L99.3 106zm22.4-29c.3-2.2 2.2-3.4 4.4-3.4 3.4-.3 7.1.3 10.2 1.9l1.9-8.6c-3.1-1.2-6.5-1.8-9.6-1.8-10.3 0-17.8 5.6-17.8 13.3 0 5.9 5.3 9 9 10.9 4.1 1.9 5.6 3.1 5.3 5s-3.1 4-6.2 4c-3.7 0-7.4-.9-10.8-2.5L106.1 104.2c3.7 1.5 7.8 2.1 11.5 2.1 11.5.3 18.7-5.3 18.7-13.6 0-10.5-14.6-11.1-14.6-15.7zM173.5 106l-8.4-40.1h-9c-1.9 0-3.8 1.1-4.4 3l-15.6 37.1h10.9l2.2-5.9h13.4l1.2 5.9h9.7zm-15.9-29.3l3.1 15.1h-8.7l5.6-15.1z" fill="#172B85"/></svg></div></li>
                       <li className="ss-payment-item"><div className="ss-payment-icon"><svg width="40" height="26" viewBox="0 0 226 167"><rect fill="#5A31F4" height="124.354" rx="14.5521" stroke="#D9D9D9" strokeWidth="2.64583" width="182.562" x="21.3229" y="21.3229"/><path d="M124.3 78.5c0 8.2-5.7 14-13.7 14h-7.5c-.1 0-.2 0-.3.1s-.1.1-.2.2c-.1.1-.1.2-.1.3s-.1.2-.1.3V103.8c0 .2-.1.4-.2.5s-.3.2-.5.2h-5.3c-.1 0-.2-.1-.3-.2s-.1-.2-.2-.4c0-.1 0-.2 0-.3s0-.1 0-.2c0-38.6 0-38.7.1-38.8v-.1s.1-.1.1-.2c.1-.1.2-.1.3-.2s.1-.1.3-.1h14.1c8-.1 13.7 5.7 13.7 13.9zm-6.6 0c0-4.7-3.2-8.1-7.5-8.1h-7.1c-.1 0-.2 0-.3.1s-.1.1-.2.2c-.1.1-.1.2-.1.3s-.1.2-.1.3V86c0 .2.1.3.2.4s.3.1.5.1h7.1c4.3.1 7.5-3.3 7.5-8zm8.1 18.6c-.1-1.3.2-2.5.8-3.6.5-1.1 1.4-2.1 2.4-2.8 2.1-1.5 5.3-2.3 10-2.5l5-.2v-1.5c0-3-2-4.2-5.2-4.2s-5.2 1.1-5.7 3c0 .1-.1.2-.2.3s-.1.1-.3.1h-5c-.1 0-.2 0-.3-.1s-.1-.1-.2-.2c-.1-.1-.1-.2-.1-.3s0-.2 0-.3c.7-4.4 4.4-7.7 12.1-7.7 8.2 0 11.2 3.8 11.2 11.1v15.5c0 .2-.1.4-.2.5s-.3.2-.5.2h-5c-.2 0-.4-.1-.5-.3s-.1-.2-.1-.4V102.7c0-.1 0-.2-.1-.3s-.1-.2-.2-.2c-.1-.1-.2-.1-.3-.1s-.2 0-.3.1c-1.5 1.6-3.9 2.8-7.8 2.8-5.7 0-9.5-3-9.5-8.1zm18.1-3.4v-1.2l-6.5.3c-3.4.2-5.4 1.6-5.4 4 0 2.2 1.8 3.4 5 3.4 4.3 0 6.9-2.3 6.9-6.5z" fill="white"/></svg></div></li>
                     </div>
@@ -650,20 +647,35 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ page, onNavigate 
       {isModalOpen && (
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
-          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden p-10 text-center space-y-6">
-              <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-4xl mx-auto">📦</div>
-              <h3 className="text-2xl font-black text-gray-900">Completa il tuo Ordine</h3>
-              <p className="text-gray-500 text-sm font-normal">Stai ordinando <strong>{page.productName}</strong> al prezzo di <strong>{content.price}</strong>. La spedizione è gratuita!</p>
-              <div className="space-y-3 pt-4">
-                <a 
-                  href={page.buyLink || '#'} 
-                  target="_blank" 
-                  className="block w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-blue-100"
-                >
-                  Acquista Ora
-                </a>
-                <button onClick={() => setIsModalOpen(false)} className="block w-full text-gray-400 text-[10px] font-bold uppercase tracking-widest hover:text-gray-900">Annulla e continua a leggere</button>
-              </div>
+          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden p-6 md:p-10 text-center space-y-6 max-h-[90vh] overflow-y-auto">
+              {content.purchaseFormHtml ? (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center border-b border-gray-100 pb-4">
+                    <h3 className="text-xl font-black text-gray-900">Finalizza l'Ordine</h3>
+                    <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-900">✕</button>
+                  </div>
+                  <div 
+                    className="custom-form-container text-left" 
+                    dangerouslySetInnerHTML={{ __html: content.purchaseFormHtml }} 
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-4xl mx-auto">📦</div>
+                  <h3 className="text-2xl font-black text-gray-900">Completa il tuo Ordine</h3>
+                  <p className="text-gray-500 text-sm font-normal">Stai ordinando <strong>{page.productName}</strong> al prezzo di <strong>{content.price}</strong>. La spedizione è gratuita!</p>
+                  <div className="space-y-3 pt-4">
+                    <a 
+                      href={page.buyLink || '#'} 
+                      target="_blank" 
+                      className="block w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-blue-100"
+                    >
+                      Acquista Ora
+                    </a>
+                    <button onClick={() => setIsModalOpen(false)} className="block w-full text-gray-400 text-[10px] font-bold uppercase tracking-widest hover:text-gray-900">Annulla e continua a leggere</button>
+                  </div>
+                </>
+              )}
           </div>
         </div>
       )}

@@ -96,7 +96,8 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
     popupInterval: 10,
     socialProofName: 'Michelle',
     socialProofCount: 758,
-    timelineConfig: DEFAULT_TIMELINE
+    timelineConfig: DEFAULT_TIMELINE,
+    purchaseFormHtml: ''
   });
 
   useEffect(() => {
@@ -162,7 +163,8 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
         popupInterval: aiContent.popupInterval ?? 10,
         socialProofName: aiContent.socialProofName || 'Michelle',
         socialProofCount: aiContent.socialProofCount || 758,
-        timelineConfig: aiContent.timelineConfig || DEFAULT_TIMELINE
+        timelineConfig: aiContent.timelineConfig || DEFAULT_TIMELINE,
+        purchaseFormHtml: aiContent.purchaseFormHtml || ''
       });
       delete (window as any).__PENDING_AI_DATA__;
     } else if (initialData) {
@@ -199,7 +201,8 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
         popupInterval: savedContent.popupInterval ?? 10,
         socialProofName: savedContent.socialProofName || 'Michelle',
         socialProofCount: savedContent.socialProofCount || 758,
-        timelineConfig: savedContent.timelineConfig || DEFAULT_TIMELINE
+        timelineConfig: savedContent.timelineConfig || DEFAULT_TIMELINE,
+        purchaseFormHtml: savedContent.purchaseFormHtml || ''
       });
     }
   }, [initialData]);
@@ -379,6 +382,20 @@ const LandingPageGenerator: React.FC<LandingPageGeneratorProps> = ({ onSave, onU
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase">Scorte Iniziali (Magazzino)</label>
                     <input type="number" className="w-full bg-gray-50 border-2 border-gray-100 rounded-xl p-3 text-sm font-bold text-red-500" value={content.stockCount} onChange={e => setContent({...content, stockCount: parseInt(e.target.value) || 0})} />
+                  </div>
+                  <div className="col-span-2 space-y-2 pt-4">
+                    <label className="text-[10px] font-black text-emerald-600 uppercase flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                      Formulario HTML Personalizzato (Avanzato)
+                    </label>
+                    <p className="text-[9px] text-gray-400 font-medium">Se inserisci del codice qui (es. un form di Typeform o un modulo personalizzato), verrà mostrato nel modale di acquisto al posto del link esterno.</p>
+                    <textarea 
+                      rows={6}
+                      className="w-full bg-gray-900 border-2 border-gray-800 rounded-xl p-4 text-xs font-mono text-emerald-400 outline-none focus:border-emerald-500 transition-all shadow-inner" 
+                      value={content.purchaseFormHtml} 
+                      onChange={e => setContent({...content, purchaseFormHtml: e.target.value})} 
+                      placeholder='<form action="...">\n  <input type="text" placeholder="Tua Email" />\n  <button>Invia</button>\n</form>'
+                    />
                   </div>
                </div>
             </AccordionSection>
